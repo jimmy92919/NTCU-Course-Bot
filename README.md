@@ -25,7 +25,15 @@
 
    ```bash
    pip install -r requirements.txt
-3. **運行程式**
+3. **配置用戶設置** 
+   在 ntcu.py 中，你可以修改以下設定來適應你的需求：
+
+   USER_ACCOUNT：你的選課系統帳號
+   USER_PASSWORD：你的選課系統密碼
+   DEPARTMENT：要選擇的系所（例如：資工系）
+   GRADE：要選擇的年級（例如：3）
+   COURSE_NAME：你要加選的課程名稱（例如：演算法）
+4. **運行程式**
    運行爬蟲 修改爬蟲配置後，執行下列命令來啟動爬蟲：
 
    ```bash
