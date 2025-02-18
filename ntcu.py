@@ -20,6 +20,12 @@ from selenium.common.exceptions import (
 # 設定 Tesseract 路徑
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
+# 用戶設定：這些設定可以讓使用者方便修改
+USER_ACCOUNT = ""  # 用戶帳號
+USER_PASSWORD = ""  # 用戶密碼
+DEPARTMENT = ""  # 要選擇的系所
+GRADE = ""  # 要選擇的年級
+COURSE_NAME = ""  # 要加選的課程名稱
 
 def recaptchaByPass(code_image: str) -> str:
     ocr = ddddocr.DdddOcr()
@@ -28,7 +34,6 @@ def recaptchaByPass(code_image: str) -> str:
     image = Image.open(BytesIO(image_data))
     res = ocr.classification(image)
     return res
-
 
 def login_and_check_course():
     chrome_options = Options()
@@ -48,8 +53,8 @@ def login_and_check_course():
                 EC.presence_of_element_located((By.ID, "User_Account"))
             )
 
-            driver.find_element(By.ID, "User_Account").send_keys("ACS111143")
-            driver.find_element(By.ID, "User_Password").send_keys("(Jimmy92919")
+            driver.find_element(By.ID, "User_Account").send_keys(USER_ACCOUNT)
+            driver.find_element(By.ID, "User_Password").send_keys(USER_PASSWORD)
 
             # 透過 Selenium 拿到驗證碼圖片
             captcha_element = driver.find_element(By.ID, "Check_Code_Img")
@@ -86,10 +91,10 @@ def login_and_check_course():
             driver.find_element(By.ID, "cmdInquire").click()
             print("已點擊查詢課程！")
             dept_select = Select(driver.find_element(By.ID, "cboDept"))
-            dept_select.select_by_visible_text("資工系")
-            print("已選擇資工系！")
-            driver.find_element(By.ID, "txtGrade").send_keys("3")
-            print("已輸入年級！")
+            dept_select.select_by_visible_text(DEPARTMENT)
+            print(f"已選擇 {DEPARTMENT}！")
+            driver.find_element(By.ID, "txtGrade").send_keys(GRADE)
+            print(f"已輸入年級 {GRADE}！")
             driver.find_element(By.ID, "cmdQueryCur").click()
             print("已點擊查詢！")
             time.sleep(2)
@@ -98,26 +103,25 @@ def login_and_check_course():
             rows = course_table.find_elements(By.TAG_NAME, "tr")
             for row in rows:
                 try:
-                # 1. 抓取課程名稱（第 5 個 <td>）
+                    # 1. 抓取課程名稱（第 5 個 <td>）
                     course_name = row.find_elements(By.TAG_NAME, "td")[4].text.strip()
 
-                # 2. 如果課程名稱是「雲端運算概論」
-                    if "雲端運算概論" in course_name:
+                    # 2. 如果課程名稱是設定的目標課程
+                    if COURSE_NAME in course_name:
                         print(f"找到課程：{course_name}")
 
                     # 3. 抓取人數資訊（第 10 個 <td>）
-                        count_text = row.find_elements(By.TAG_NAME, "td")[9].text.strip()
+                    count_text = row.find_elements(By.TAG_NAME, "td")[9].text.strip()
 
                     # 4. 解析人數 "29/52" -> current_count=29, max_count=52
-                        current_count, max_count = map(int, count_text.split("/"))
-                        print(f"目前人數: {current_count}/{max_count}")
+                    current_count, max_count = map(int, count_text.split("/"))
+                    print(f"目前人數: {current_count}/{max_count}")
 
-                    # 5. 如果目前人數小於 29，點擊加選按鈕（第 1 個 <td> 裡的按鈕）
-                        
-                        add_button = row.find_element(By.CSS_SELECTOR, "input.red_M[value='加選']")
-                        add_button.click()
-                        print("成功點擊加選按鈕！")
-                        time.sleep(120)
+                    
+                    add_button = row.find_element(By.CSS_SELECTOR, "input.red_M[value='加選']")
+                    add_button.click()
+                    print("成功點擊加選按鈕！")
+                    time.sleep(120)
                 except Exception as e:
                     print(f"處理課程時發生錯誤：{e}")
                     continue
@@ -135,7 +139,6 @@ def login_and_check_course():
             time.sleep(2)
 
     driver.quit()
-
 
 if __name__ == "__main__":
     while True:
