@@ -29,4 +29,4 @@
    運行爬蟲 修改爬蟲配置後，執行下列命令來啟動爬蟲：
 
    ```bash
-   python bot.py
+   python ntcu.py
