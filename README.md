@@ -20,3 +20,8 @@
    ```bash
    git clone https://github.com/jimmy92919/NTCU-Course-Bot.git
    cd NTCU-Course-Bot
+2. **安裝依賴套件**
+   安裝依賴套件 請使用以下命令安裝所有的依賴套件：
+
+   ```bash
+   pip install -r requirements.txt
